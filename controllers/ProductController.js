@@ -1,6 +1,6 @@
 const fs = require('fs');
 const Validator = require('validatorjs');
-const { ObjectId } = require('mongodb');
+const {ObjectId} = require('mongodb');
 
 const ResponseService = require('../services').ResponseService;
 const responseServiceObj = new ResponseService();
@@ -17,9 +17,20 @@ const categoryServiceObj = new CategoryService();
 let PRODUCT_IMAGE_PATH = require('../config/config').PRODUCT_IMAGE_PATH;
 let PRODUCT_IMAGE_UPLOAD_PATH = require('../config/config').PRODUCT_IMAGE_UPLOAD_PATH;
 
+// interface ProductUpdateInterface {
+//     id: number;
+//     department_id?: string;
+//     category_id?: string;
+//     product_title?: string;
+//     product_slug?: string;
+//     product_price?: string;
+//     status?: string;
+// }
+
 module.exports = class ProductController {
 
-    constructor() { }
+    constructor() {
+    }
 
     get(req, res, next) {
         try {
@@ -29,7 +40,7 @@ module.exports = class ProductController {
                 .then(async (result) => {
                     return await responseServiceObj.sendResponse(res, {
                         msg: 'Products Fetched Successfully',
-                        data: { 
+                        data: {
                             product: result,
                             PRODUCT_IMAGE_PATH: PRODUCT_IMAGE_PATH
                         }
@@ -54,7 +65,7 @@ module.exports = class ProductController {
                 .then(async (result) => {
                     return await responseServiceObj.sendResponse(res, {
                         msg: 'Product Fetched Successfully',
-                        data: { 
+                        data: {
                             product: result,
                             PRODUCT_IMAGE_PATH: PRODUCT_IMAGE_PATH
                         }
@@ -81,17 +92,17 @@ module.exports = class ProductController {
                     if (result) {
                         return await responseServiceObj.sendResponse(res, {
                             msg: 'Product Title Already Exists',
-                            data: { msg: 'Product Title Already Exists', exists: true }
+                            data: {msg: 'Product Title Already Exists', exists: true}
                         });
                     } else {
                         return await responseServiceObj.sendResponse(res, {
                             msg: 'Product Title Available',
-                            data: { msg: 'Product Title Available', exists: false }
+                            data: {msg: 'Product Title Available', exists: false}
                         });
                     }
                 }).catch(async (ex) => {
-                    return await responseServiceObj.sendException(res, { msg: ex.toString() });
-                });
+                return await responseServiceObj.sendException(res, {msg: ex.toString()});
+            });
         } catch (ex) {
             return responseServiceObj.sendException(res, {
                 msg: ex.toString()
@@ -108,17 +119,17 @@ module.exports = class ProductController {
                     if (result) {
                         return await responseServiceObj.sendResponse(res, {
                             msg: 'Product Slug Already Exists',
-                            data: { msg: 'Product Slug Already Exists', exists: true }
+                            data: {msg: 'Product Slug Already Exists', exists: true}
                         });
                     } else {
                         return await responseServiceObj.sendResponse(res, {
                             msg: 'Product Slug Available',
-                            data: { msg: 'Product Slug Available', exists: false }
+                            data: {msg: 'Product Slug Available', exists: false}
                         });
                     }
                 }).catch(async (ex) => {
-                    return await responseServiceObj.sendException(res, { msg: ex.toString() });
-                });
+                return await responseServiceObj.sendException(res, {msg: ex.toString()});
+            });
         } catch (ex) {
             return responseServiceObj.sendException(res, {
                 msg: ex.toString()
@@ -159,11 +170,11 @@ module.exports = class ProductController {
                     let product = await ProductServiceObj.insert(in_data);
                     return await responseServiceObj.sendResponse(res, {
                         msg: 'Product Inserted Successfully',
-                        data: { product: product }
+                        data: {product: product}
                     });
                 })
                 .catch(async (ex) => {
-                    return await responseServiceObj.sendException(res, { msg: ex.toString() });
+                    return await responseServiceObj.sendException(res, {msg: ex.toString()});
                 });
         } catch (ex) {
             return responseServiceObj.sendException(res, {
@@ -176,16 +187,16 @@ module.exports = class ProductController {
         try {
             let in_data = req.body;
             let id = ObjectId(req.params.id);
-            let rules = { id: id };
-
+            // let rules: ProductUpdateInterface = {id: id};
+            let rules = {id: id};
             in_data.department_id ? rules.department_id = 'required' : '';
             in_data.category_id ? rules.category_id = 'required' : '';
             in_data.product_title ? rules.product_title = 'required' : '';
             in_data.product_slug ? rules.product_slug = 'required' : '';
             in_data.product_price ? in_data.product_price = 'required|numeric' : '',
-            // attributes: 'required',
-            // reviews: 'required',
-            in_data.status ? rules.status = 'required' : '';
+                // attributes: 'required',
+                // reviews: 'required',
+                in_data.status ? rules.status = 'required' : '';
             // quantity:
             // purchase_price:
             // selling_price:
@@ -207,11 +218,11 @@ module.exports = class ProductController {
                     let Product = await ProductServiceObj.update(in_data, id);
                     return await responseServiceObj.sendResponse(res, {
                         msg: 'Product Updated Successfully',
-                        data: { product: await ProductServiceObj.getById(id) }
+                        data: {product: await ProductServiceObj.getById(id)}
                     });
                 })
                 .catch(async (ex) => {
-                    return await responseServiceObj.sendException(res, { msg: ex.toString() });
+                    return await responseServiceObj.sendException(res, {msg: ex.toString()});
                 });
         } catch (ex) {
             return responseServiceObj.sendException(res, {
@@ -257,7 +268,7 @@ module.exports = class ProductController {
             let department_slug = req.params.department_slug;
             departmentServiceObj.getBySlug(department_slug)
                 .then(async (result) => {
-                    if( result ) {
+                    if (result) {
                         return result;
                     } else {
                         throw "No department found.";
@@ -294,7 +305,7 @@ module.exports = class ProductController {
             let category_slug = req.params.category_slug;
             categoryServiceObj.getBySlug(category_slug)
                 .then(async (result) => {
-                    if( result ) {
+                    if (result) {
                         return result;
                     } else {
                         throw "No category found.";
@@ -307,8 +318,8 @@ module.exports = class ProductController {
                 })
                 .then(async (categories) => {
 
-                    let catg = categories.filter( ( element ) => element.category_slug == category_slug ? true : false );
-                    if( catg.length ) {
+                    let catg = categories.filter((element) => element.category_slug == category_slug ? true : false);
+                    if (catg.length) {
                         return catg[0];
                     } else {
                         throw "No category found.";
@@ -350,13 +361,13 @@ module.exports = class ProductController {
                     }
                 })
                 .then(async (in_result) => {
-                    let imageDetails = req.params.imageDetails;    
+                    let imageDetails = req.params.imageDetails;
                     let obj = {
                         product_id: productId,
                         url: imageDetails.fullFileName,
                         default: 0
                     };
-                    let result = await ProductServiceObj.insertImage( productId, obj );
+                    let result = await ProductServiceObj.insertImage(productId, obj);
                     return await responseServiceObj.sendResponse(res, {
                         msg: 'Product image uploaded successfully',
                         data: {
@@ -391,16 +402,17 @@ module.exports = class ProductController {
                 .then(async (isExists) => {
                     if (!isExists) {
                         throw 'Invalid Product id';
-                    } 
+                    }
                     return true;
                 })
                 .then(async (result) => {
                     product = await ProductServiceObj.getById(productId);
                     // imagesArr = product.images.filter( image => image.url !== image_name );
-                    imagesNameArr = product.images.filter( image => image._id !== imageId );
-                    if( imagesNameArr.length > 0 ) {
+                    imagesNameArr = product.images.filter(image => image._id !== imageId);
+                    if (imagesNameArr.length > 0) {
                         image_name = imagesNameArr[0].url;
-                    } else {}
+                    } else {
+                    }
                     return true;
                 })
                 .then(async (inResult) => {
@@ -411,7 +423,7 @@ module.exports = class ProductController {
                     return true;
                 })
                 .then(async (inResult) => {
-                    let result = await ProductServiceObj.deleteImage( productId, imageId);
+                    let result = await ProductServiceObj.deleteImage(productId, imageId);
                     return await responseServiceObj.sendResponse(res, {
                         msg: 'Image deleted successfully',
                         data: {
@@ -432,7 +444,7 @@ module.exports = class ProductController {
         }
     }
 
-    setImagePrimary( req, res, next ) {
+    setImagePrimary(req, res, next) {
         try {
 
             let in_id = req.params.productId;
@@ -458,7 +470,7 @@ module.exports = class ProductController {
                     return result;
                 })
                 .then(async (result) => {
-                    let product = await ProductServiceObj.setImagePrimary( productId, imageId, in_data);
+                    let product = await ProductServiceObj.setImagePrimary(productId, imageId, in_data);
                     return await responseServiceObj.sendResponse(res, {
                         msg: 'Image Set As Primary',
                         data: {
@@ -473,7 +485,7 @@ module.exports = class ProductController {
                     });
                 });
 
-        } catch( ex ) {
+        } catch (ex) {
             return responseServiceObj.sendException(res, {
                 msg: ex.toString()
             });
@@ -535,7 +547,7 @@ module.exports = class ProductController {
                 .then(async (result) => {
                     return await responseServiceObj.sendResponse(res, {
                         msg: 'Product Fetched Successfully',
-                        data: { 
+                        data: {
                             product: result,
                             PRODUCT_IMAGE_PATH: PRODUCT_IMAGE_PATH
                         }
